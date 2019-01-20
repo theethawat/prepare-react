@@ -2,17 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 class Square extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      value: null,
-    };
-  }
     render() {
         return (
             <button className="square" 
-            onClick={()=>this.setState({value:'X'})}>
-              {this.state.value}
+            onClick={()=>this.props.onClick()}>
+              {this.props.value}
             </button>
           );
     }
@@ -27,7 +21,8 @@ class Square extends React.Component {
     }
       //เป็นการสร้างฟังก์ชันฟังก์ชั่นหนึ่ง
     renderSquare(i) {
-      return <Square value={this.state.squares[i]}/>;
+      return <Square value={this.state.squares[i]}
+      onClick={()=>this.handleClick(i)}/>;
     }
   
     render() {
