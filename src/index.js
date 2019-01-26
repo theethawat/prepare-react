@@ -1,15 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-class Square extends React.Component {
-    render() {
+function Square(props) {
         return (
             <button className="square" 
-            onClick={()=>this.props.onClick()}>
-              {this.props.value}
+            onClick={()=>props.onClick()}>
+              {props.value}
             </button>
           );
-    }
   }
   
   class Board extends React.Component {
@@ -17,6 +15,7 @@ class Square extends React.Component {
       super(props);
       this.state ={
         squares: Array(9).fill(null),
+        xIsNext:true,
       }
     }
       //เป็นการสร้างฟังก์ชันฟังก์ชั่นหนึ่ง
@@ -27,12 +26,26 @@ class Square extends React.Component {
     
     handleClick(i){
       const fnsquares = this.state.squares.slice();
-      fnsquares[i] = 'X';
-      this.setState({squares:fnsquares});
+      if(calculteWinner(fnsquares)||fnsquares[i]){
+        return;
+      }
+      fnsquares[i] = this.state.xIsNext ? 'X' : 'O';
+      this.setState({
+        squares:fnsquares,
+        xIsNext:!this.state.xIsNext,
+      });
     }
 
     render() {
-      const status = 'Next player: X';
+      const winner = calculteWinner(this.state.squares);
+      let status;
+      if (winner) {
+        status = 'Winner:' + winner;
+      }
+      else{
+        status = 'Next player: ' + (this.state.xIsNext ? 'X':'O');
+      }
+      
   
       return (
         <div>
@@ -57,6 +70,26 @@ class Square extends React.Component {
     }
   }
   
+  function calculteWinner(squares){
+    const lines =[
+      [0,1,2],
+      [3,4,5],
+      [6,7,8],
+      [0,3,6],
+      [1,4,7],
+      [2,5,8],
+      [0,4,8],
+      [2,4,6],
+    ];
+    for (let i = 0 ; i < lines.length;i++){
+      //ถ้าผลสามตัวติดกันเป็นอันใดอันหนึ่ง แล้ว square a b c เป็นเครื่องหมายเดียวกัน X , O เดียวกัน ก็ declare a winner 
+      const [a,b,c] = lines[i];
+      if(squares [a] && squares[a] === squares[b] && squares[a] === squares[c]){
+        return squares[a];
+      }
+    }
+    return null;
+  }
   class Game extends React.Component {
     render() {
       return (
